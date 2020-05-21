@@ -7,7 +7,6 @@ spec:
     requests:
       storage: 5Gi
   volumeMode: Filesystem
-  storageClassName: ocs-storagecluster-cephfs
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain 
