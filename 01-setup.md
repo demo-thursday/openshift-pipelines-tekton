@@ -10,12 +10,12 @@ First, login to your OpenShift cluster as an admin user.  Once logged in:
 * In the keyword filter, type "Pipelines".
 * You should now see OpenShift Pipelines Operator
 
-IMAGE HERE
+![OpenShift Pipelines Operator](images/openshift-pipelines-operator.png)
 
 * Click on *OpenShift Pipelines Operator*, then **Install**.
 * Keep the default *subscription* settings, then cick **Subscribe**
 
-OpenShift Pipelines will now install and your cluster will be ready to run pipelines!
+OpenShift Pipelines will now install and your cluster will be ready to create and run pipelines!
 
 [Next: What's in a Pipeline?](02-pipeline-intro.md)
 
