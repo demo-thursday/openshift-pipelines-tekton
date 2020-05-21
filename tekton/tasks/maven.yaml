@@ -1,0 +1,59 @@
+kind: Task
+apiVersion: tekton.dev/v1alpha1
+metadata:
+  name: maven
+spec:
+  workspaces:
+  - name: local-maven-repo
+    description: Maven local repo dir.
+    mountPath: /data/m2
+  - name: build-workspace
+    description: Build artifacts.
+    mountPath: /workspace/source
+  inputs:
+    params:
+    - name: GOALS
+      description: The Maven goals to run
+      type: array
+      default: ["package"]
+    - name: ENV_VAR
+      description: 
+      type: string
+      default: "-Dbuild=true"
+    resources:
+    - name: source
+      type: git
+  stepTemplate:
+    env:
+    - name: "SONAR_USER_HOME"
+      value: "/workspace/source/.sonar"
+    envFrom:
+    - secretRef:
+        name: nexus-secret
+  steps:
+    - name: git-config
+      image: maven:3.3.9-jdk-8
+      workingDir: $(workspaces.build-workspace.path)
+      script: |
+          #!/usr/bin/env bash
+          echo "Set global git config."
+          git config --global user.email "apitt@redhat.com"
+          git config --global user.name "Andrew Pitt"
+          git config --list
+    - name: mvn-build
+      image: maven:3.3.9-jdk-8
+      workingDir: $(workspaces.build-workspace.path)
+      command: ["/usr/bin/mvn"]
+      args:
+        - "$(inputs.params.ENV_VAR)"
+        - -s
+        - /var/mvn/settings.xml
+        - "$(inputs.params.GOALS)"
+        - -e
+      volumeMounts:
+        - name: maven-settings
+          mountPath: /var/mvn
+  volumes:
+    - name: maven-settings
+      configMap:
+        name: maven-settings-cm

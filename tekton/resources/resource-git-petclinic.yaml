@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: app-repo
+spec:
+  type: git
+  params:
+    - name: url
+      value: http://github.com/pittar/spring-petclinic.git
+    - name: revision
+      value: master

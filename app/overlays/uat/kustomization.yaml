@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: petclinic-uat
+bases:
+- github.com/demo-thursday/cicd-openshift-jenkins/base/app/overlays/uat?ref=master
+- ../../base

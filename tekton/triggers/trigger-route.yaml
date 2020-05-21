@@ -1,0 +1,18 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: EventListener
+    app.kubernetes.io/part-of: Triggers
+    eventlistener: petclinic-event-listener
+  name: el-petclinic-event-listener
+spec:
+  port:
+    targetPort: http-listener
+  to:
+    kind: Service
+    name: el-petclinic-event-listener
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress: []

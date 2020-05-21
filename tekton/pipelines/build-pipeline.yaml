@@ -1,0 +1,71 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: maven-build
+spec:
+  resources:
+  - name: app-repo
+    type: git
+  tasks:
+  - name: clean
+    taskRef:
+      kind: Task
+      name: clean-workspace
+    workspaces:
+    - name: build-workspace
+      workspace: build-workspace
+  - name: build
+    taskRef:
+      kind: Task
+      name: maven
+    runAfter:
+      - clean 
+    params:
+      - name: GOALS
+        value: ["clean", "deploy", "sonar:sonar"]
+    resources:
+      inputs:
+      - name: source
+        resource: app-repo
+    workspaces:
+    - name: local-maven-repo
+      workspace: local-maven-repo
+    - name: build-workspace
+      workspace: build-workspace
+  - name: begin-s2i
+    taskRef:
+      kind: Task
+      name: oc-start-s2i
+    runAfter:
+      - build 
+    params:
+      - name: APP_NAME
+        value: petclinic
+    workspaces:
+    - name: build-workspace
+      workspace: build-workspace
+  - name: deploy-dev
+    taskRef:
+      kind: Task
+      name: openshift-client
+    runAfter:
+      - begin-s2i 
+    params:
+      - name: COMMANDS
+        value: |
+            oc rollout latest dc/petclinic -n petclinic-dev
+            oc rollout status dc/petclinic -n petclinic-dev
+  - name: deploy-uat
+    taskRef:
+      kind: Task
+      name: openshift-client
+    runAfter:
+      - deploy-dev
+    params:
+      - name: COMMANDS
+        value: |
+            oc rollout latest dc/petclinic -n petclinic-uat
+            oc rollout status dc/petclinic -n petclinic-uat
+  workspaces:
+  - name: build-workspace
+  - name: local-maven-repo

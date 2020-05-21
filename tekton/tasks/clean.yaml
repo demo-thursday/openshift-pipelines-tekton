@@ -1,0 +1,22 @@
+kind: Task
+apiVersion: tekton.dev/v1alpha1
+metadata:
+  name: clean-workspace
+spec:
+  workspaces:
+  - name: build-workspace
+    description: Maven local repo dir.
+    mountPath: /workspace/source
+  steps:
+    - name: clean-workspace
+      image: maven:3.3.9-jdk-8
+      workingDir: $(workspaces.build-workspace.path)
+      script: |
+          #!/usr/bin/env bash
+          echo "Listing workspace"
+          ls -la $(workspaces.build-workspace.path)
+          echo "Cleaning workspace"
+          rm -rf $(workspaces.build-workspace.path)/*
+          rm -rf $(workspaces.build-workspace.path)/.* 2> /dev/null
+          echo "Cleaned... should be now be empty"
+          ls -la $(workspaces.build-workspace.path)
