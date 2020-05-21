@@ -20,5 +20,5 @@ This also means the entire pipeline is codified in standard Kubernetes objects a
 
 Even better, since a Pipeline defines a set of *Tasks* that are simply containers with defined input and output, there is no "master" server running to maintain configuration or state.  Your pipelines only consume resources when you they run, just like any other "serverless" function.
 
-
+[Next: Install the CI/CD Tools, Demo App, and Pipelines.](02-install-demo.md)
 
