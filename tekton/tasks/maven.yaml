@@ -27,7 +27,7 @@ spec:
           name: nexus-secret
   steps:
     - name: git-config
-      image: maven:3.3.9-jdk-8
+      image: maven:3.6.3-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       script: |
           #!/usr/bin/env bash
@@ -36,14 +36,14 @@ spec:
           git config --global user.name "Andrew Pitt"
           git config --list
     - name: mvn-build
-      image: maven:3.3.9-jdk-8
+      image: maven:3.6.3-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       command: ["/usr/bin/mvn"]
       args:
-        - "$(inputs.params.ENV_VAR)"
+        - "$(params.ENV_VAR)"
         - -s
         - /var/mvn/settings.xml
-        - "$(inputs.params.GOALS)"
+        - "$(params.GOALS)"
         - -e
       volumeMounts:
         - name: maven-settings

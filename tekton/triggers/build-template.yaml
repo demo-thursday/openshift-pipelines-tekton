@@ -1,30 +1,30 @@
-apiVersion: triggers.tekton.dev/v1beta1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
   name: petclinic-template
 spec:
   params:
-    - name: git-url
+    - name: git-repo-url
       description: The git repository url
-    - name: git-revision
+    - name: git-repo-revision
       description: The git revision
       default: master
-    - name: git-name
+    - name: git-repo-name
       description: The name of the deployment to be created / patched
   resourcetemplates:
-    - apiVersion: tekton.dev/v1beta1
-      kind: PipelineRun
+    - kind: PipelineRun
+      apiVersion: tekton.dev/v1beta1
       metadata:
-        name: build-deploy-$(params.git-repo-name)-$(uid)
+        name: build-$(params.git-repo-name)-$(uid)
       spec:
         serviceAccountName: pipeline
         pipelineRef:
           name: maven-build
         params:
           - name: git-url
-            value: $(params.git-url)
+            value: $(params.git-repo-url)
           - name: git-revision
-            value: $(params.git-revision)
+            value: $(params.git-repo-revision)
         workspaces:
           - name: build-workspace
             persistentVolumeClaim:

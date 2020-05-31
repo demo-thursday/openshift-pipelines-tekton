@@ -19,4 +19,4 @@ spec:
         ls -la .
         echo "List target contents:"
         ls -l $(workspaces.build-workspace.path)/target
-        oc start-build $(inputs.params.APP_NAME)-s2i-build --from-file=$(workspaces.build-workspace.path)/target/app.jar -n cicd --follow
+        oc start-build $(params.APP_NAME)-s2i-build --from-file=$(workspaces.build-workspace.path)/target/app.jar -n cicd --follow

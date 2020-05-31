@@ -6,6 +6,16 @@ spec:
   workspaces:
     - name: build-workspace
     - name: local-maven-repo
+  params:
+    - name: git-repo-url
+      type: string
+      default: http://github.com/pittar/spring-petclinic.git
+    - name: git-repo-revision
+      type: string
+      default: master
+    - name: git-repo-name
+      type: string
+      default: spring-petclinic
   tasks:
     - name: clone
       taskRef:
@@ -16,9 +26,9 @@ spec:
           workspace: build-workspace
       params:
         - name: url
-          value: "$(params.git_url)"
+          value: "$(params.git-repo-url)"
         - name: revision
-          value: "$(params.git_revision)"
+          value: "$(params.git-repo-revision)"
         - name: deleteExisting
           value: "true"
     - name: maven-release
@@ -26,16 +36,12 @@ spec:
         kind: Task
         name: maven
       runAfter:
-        - clean 
+        - clone 
       params:
         - name: GOALS
           value: ["release:prepare", "release:perform"]
         - name: ENV_VAR
           value: "-Drelease=true"
-      resources:
-        inputs:
-          - name: source
-            resource: app-repo
       workspaces:
         - name: local-maven-repo
           workspace: local-maven-repo
