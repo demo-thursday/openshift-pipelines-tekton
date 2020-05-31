@@ -1,18 +1,14 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   generateName: petclinic-release-run-
 spec:
   pipelineRef:
     name: maven-release
-  resources:
-  - name: app-repo
-    resourceRef:
-      name: app-repo
   workspaces:
-  - name: build-workspace
-    persistentVolumeClaim:
-      claimName: release-workspace-pvc
-  - name: local-maven-repo
-    persistentVolumeClaim:
-      claimName: maven-m2-repo-pvc
+    - name: build-workspace
+      persistentVolumeClaim:
+        claimName: release-workspace-pvc
+    - name: local-maven-repo
+      persistentVolumeClaim:
+        claimName: maven-m2-repo-pvc

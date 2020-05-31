@@ -1,12 +1,11 @@
 kind: Task
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 metadata:
   name: print
 spec:
   workspaces:
-  - name: build-workspace
-    description: Build workspace.
-    mountPath: /workspace/source
+    - name: build-workspace
+      description: Build workspace.
   steps:
     - name: echo
       image: maven:3.3.9-jdk-8

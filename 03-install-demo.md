@@ -43,6 +43,7 @@ Ok, now let's create your the pipelines:
 $ oc apply -k tekton/
 ```
 
-This will create everything... you're ready to go!
+This will create everything you need to run the pipelines.  Before we start them, let's take a deeper look at the different components of the pipelines.
+
 
 [Next: Trigger a Pipeline Run](04-triggering-pipeline.md)

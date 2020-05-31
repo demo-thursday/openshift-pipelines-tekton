@@ -1,73 +1,77 @@
-apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
+apiVersion: tekton.dev/v1beta1
 metadata:
   name: maven-release
 spec:
-  resources:
-  - name: app-repo
-    type: git
-  tasks:
-  - name: clean
-    taskRef:
-      kind: Task
-      name: clean-workspace
-    workspaces:
-    - name: build-workspace
-      workspace: build-workspace
-  - name: maven-release
-    taskRef:
-      kind: Task
-      name: maven
-    runAfter:
-      - clean 
-    params:
-      - name: GOALS
-        value: ["release:prepare", "release:perform"]
-      - name: ENV_VAR
-        value: "-Drelease=true"
-    resources:
-      inputs:
-      - name: source
-        resource: app-repo
-    workspaces:
-    - name: local-maven-repo
-      workspace: local-maven-repo
-    - name: build-workspace
-      workspace: build-workspace
-  - name: begin-s2i
-    taskRef:
-      kind: Task
-      name: oc-start-s2i
-    runAfter:
-      - maven-release 
-    params:
-      - name: APP_NAME
-        value: petclinic
-    workspaces:
-    - name: build-workspace
-      workspace: build-workspace
-  - name: deploy-dev
-    taskRef:
-      kind: Task
-      name: openshift-client
-    runAfter:
-      - begin-s2i 
-    params:
-      - name: COMMANDS
-        value: |
-            oc rollout latest dc/petclinic -n petclinic-dev
-            oc rollout status dc/petclinic -n petclinic-dev
-  - name: deploy-uat
-    taskRef:
-      kind: Task
-      name: openshift-client
-    runAfter:
-      - deploy-dev
-    params:
-      - name: COMMANDS
-        value: |
-            oc rollout latest dc/petclinic -n petclinic-uat
-            oc rollout status dc/petclinic -n petclinic-uat
   workspaces:
-  - name: build-workspace
-  - name: local-maven-repo
+    - name: build-workspace
+    - name: local-maven-repo
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: build-workspace
+      params:
+        - name: url
+          value: "$(params.git_url)"
+        - name: revision
+          value: "$(params.git_revision)"
+        - name: deleteExisting
+          value: "true"
+    - name: maven-release
+      taskRef:
+        kind: Task
+        name: maven
+      runAfter:
+        - clean 
+      params:
+        - name: GOALS
+          value: ["release:prepare", "release:perform"]
+        - name: ENV_VAR
+          value: "-Drelease=true"
+      resources:
+        inputs:
+          - name: source
+            resource: app-repo
+      workspaces:
+        - name: local-maven-repo
+          workspace: local-maven-repo
+        - name: build-workspace
+          workspace: build-workspace
+    - name: begin-s2i
+      taskRef:
+        kind: Task
+        name: oc-start-s2i
+      runAfter:
+        - maven-release 
+      params:
+        - name: APP_NAME
+          value: petclinic
+      workspaces:
+        - name: build-workspace
+          workspace: build-workspace
+    - name: deploy-dev
+      taskRef:
+        kind: Task
+        name: openshift-client
+      runAfter:
+        - begin-s2i 
+      params:
+        - name: COMMANDS
+          value: |
+              oc rollout latest dc/petclinic -n petclinic-dev
+              oc rollout status dc/petclinic -n petclinic-dev
+    - name: deploy-uat
+      taskRef:
+        kind: Task
+        name: openshift-client
+      runAfter:
+        - deploy-dev
+      params:
+        - name: COMMANDS
+          value: |
+              oc rollout latest dc/petclinic -n petclinic-uat
+              oc rollout status dc/petclinic -n petclinic-uat

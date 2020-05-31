@@ -1,17 +1,15 @@
 kind: Task
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 metadata:
   name: maven
 spec:
   workspaces:
-  - name: local-maven-repo
-    description: Maven local repo dir.
-    mountPath: /data/m2
-  - name: build-workspace
-    description: Build artifacts.
-    mountPath: /workspace/source
-  inputs:
-    params:
+    - name: local-maven-repo
+      description: Maven local repo dir.
+      mountPath: /data/m2
+    - name: build-workspace
+      description: Build artifacts.
+  params:
     - name: GOALS
       description: The Maven goals to run
       type: array
@@ -20,16 +18,13 @@ spec:
       description: 
       type: string
       default: "-Dbuild=true"
-    resources:
-    - name: source
-      type: git
   stepTemplate:
     env:
-    - name: "SONAR_USER_HOME"
-      value: "/workspace/source/.sonar"
+      - name: "SONAR_USER_HOME"
+        value: "$(workspaces.build-workspace.path)/.sonar"
     envFrom:
-    - secretRef:
-        name: nexus-secret
+      - secretRef:
+          name: nexus-secret
   steps:
     - name: git-config
       image: maven:3.3.9-jdk-8

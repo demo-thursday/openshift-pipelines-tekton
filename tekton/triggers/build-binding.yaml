@@ -1,12 +1,12 @@
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: petclinic-binding
 spec:
   params:
-  - name: git-repo-url
+  - name: git-url
     value: $(body.repository.url)
-  - name: git-repo-name
+  - name: git-name
     value: $(body.repository.name)
   - name: git-revision
     value: $(body.head_commit.id)
