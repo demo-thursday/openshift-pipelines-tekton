@@ -12,7 +12,6 @@ As of today's Demo, OpenShift Pipelines is now in *Tech Preview*.
 
 For lots of great info on OpenShift Pipelines and a number of additional resources, please take a look at the recent [post on the OpenShift blog about OpenShift Pipelines Tech Preview](https://www.openshift.com/blog/openshift-pipelines-tech-preview-blog).
  
-
 For this demo, we will take the Jenkins pipeline that we used in a [previous demo](https://github.com/demo-thursday/cicd-openshift-jenkins) and re-create it using OpenShift Pipelines!  Then, for fun we will also add a "Release" pipeline
 
 There's lots to get through, so let's get started!
