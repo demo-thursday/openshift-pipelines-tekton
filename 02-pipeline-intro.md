@@ -12,7 +12,6 @@ Tekton consists of a few key elements:
 * [Workspaces](https://github.com/tektoncd/pipeline/blob/master/docs/workspaces.md): Shared storage to allow for state between task runs or pipeline runs.
 * [PipelineRuns](https://github.com/tektoncd/pipeline/blob/master/docs/pipelineruns.md): Run a pipeline with a set of inputs and workspaces.
 * [TriggerTemplate, EventListener, TriggerBinding](https://github.com/openshift/pipelines-tutorial/tree/release-tech-preview-1#triggers): Used to setup git webook triggers.
-* [PipelineResources](https://github.com/tektoncd/pipeline/blob/master/docs/resources.md): Now deprecated.  Still used in this demo, but will be removed soon.
 
 Essentially, each *Task* is simply a container that runs with a set of inputs and instructions.  All *Tasks* in a pipeline run in the same pod, this allows tasks to share share storage allowing for the output of one *Task* to be consumed by a downstream *Task*.
 

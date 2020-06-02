@@ -2,6 +2,8 @@
 
 **Original Demo Date: 2020-05-21**
 
+**Updated for `v1beta1` spec: 2020-06-01**
+
 ## What is OpenShift Pipelines?
 
 [OpenShift Pipelines](https://www.openshift.com/learn/topics/pipelines) is a framework for creating cloud-native CI/CD pipelines in an OpenShift environemnt.  OpenShift Pipelines is based on the upstream [Tekton](https://tekton.dev/) project that is part of the [Continuous Delivery Foundation](https://cd.foundation/). 

@@ -35,7 +35,7 @@ OpenShift Pipelines are made up of Tekton *Tasks, Workspaces, Pipelines, and Tri
 
 If you want to simply run the `maven-build` pipeline, then you are good to go.  If you want to run the `maven-release` pipeline, then you will need to:
 1. Fork https://github.com/pittar/spring-petclinic to your own GitHub account.
-2. Update `tekton/resources/resource-git-petclinic.yaml` to point to your Github repo.
+2. Update `tekton/pipelines/build-pipeline.yaml` to point to your Github repo.
 3. Update `tekton/resources/github-secret.yaml` with your Github username and password.
 
 Ok, now let's create your the pipelines:
@@ -46,4 +46,4 @@ $ oc apply -k tekton/
 This will create everything you need to run the pipelines.  Before we start them, let's take a deeper look at the different components of the pipelines.
 
 
-[Next: Trigger a Pipeline Run](04-triggering-pipeline.md)
+[Next: Trigger a Pipeline Run](04-pipeline-components.md)
