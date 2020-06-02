@@ -1,8 +1,8 @@
 # OpenShift Pipelines - Porting a Jenkins Pipeline to a Tekton Pipeline
 
-**Original Demo Date: 2020-05-21**
-
-**Updated for `v1beta1` spec: 2020-06-01**
+Revision history:
+* **Original Demo Date: 2020-05-21**
+* **Updated for `v1beta1` spec: 2020-06-01**
 
 ## What is OpenShift Pipelines?
 
