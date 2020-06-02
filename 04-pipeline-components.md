@@ -115,7 +115,117 @@ The `mvn-build` *step* executes a set of Maven goals based on the **GOALS** that
 
 ### Volumes
 
-Finally, 
+Finally, you can also mount volumes.  This is good for things like settings files.  In this example, we're mounting a `ConfigMap` with a custom `settings.xml` file for Maven to use.
 
+## Pipelines
+
+A [Pipeline](https://github.com/tektoncd/pipeline/blob/release-v0.11.x/docs/pipelines.md) describes the `Task`s, their order (including parallelism), `Workspace`s, and parameters that define your build.
+
+Here is the build *Pipeline*:
+
+```
+kind: Pipeline
+apiVersion: tekton.dev/v1beta1
+metadata:
+  name: maven-build
+spec:
+  workspaces:
+    - name: build-workspace
+    - name: local-maven-repo
+  params:
+    - name: git-repo-url
+      type: string
+      default: http://github.com/pittar/spring-petclinic.git
+    - name: git-repo-revision
+      type: string
+      default: master
+    - name: git-repo-name
+      type: string
+      default: spring-petclinic
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: build-workspace
+      params:
+        - name: url
+          value: "$(params.git-repo-url)"
+        - name: revision
+          value: "$(params.git-repo-revision)"
+        - name: deleteExisting
+          value: "true"
+    - name: build
+      taskRef:
+        kind: Task
+        name: maven
+      runAfter:
+        - clone 
+      params:
+        - name: GOALS
+          value: ["clean", "deploy", "sonar:sonar"]
+      workspaces:
+        - name: local-maven-repo
+          workspace: local-maven-repo
+        - name: build-workspace
+          workspace: build-workspace
+    - name: begin-s2i
+      taskRef:
+        kind: Task
+        name: oc-start-s2i
+      runAfter:
+        - build 
+      params:
+        - name: APP_NAME
+          value: petclinic
+      workspaces:
+        - name: build-workspace
+          workspace: build-workspace
+    - name: deploy-dev
+      taskRef:
+        kind: Task
+        name: openshift-client
+      runAfter:
+        - begin-s2i 
+      params:
+        - name: COMMANDS
+          value: |
+              oc rollout latest dc/petclinic -n petclinic-dev
+              oc rollout status dc/petclinic -n petclinic-dev
+    - name: deploy-uat
+      taskRef:
+        kind: Task
+        name: openshift-client
+      runAfter:
+        - deploy-dev
+      params:
+        - name: COMMANDS
+          value: |
+              oc rollout latest dc/petclinic -n petclinic-uat
+              oc rollout status dc/petclinic -n petclinic-uat
+```
+
+Let's go through this block by block:
+
+### Workspaces
+
+Simply put, the names of the workspaces this *pipeline* expects as input when it is run.
+
+### Params
+
+Parameters that can be used configure tasks in the pipeline.  These can be passed in when the pipline is run, or the defaults can be used.  This pipeline declared three parameters (all git related).  These will be used later when we create a git webhook.
+
+### Tasks
+
+Tasks do the actual work in a pipeline.  Each task has:
+* A name
+* A reference to a `Task` that exists either in the cluster (`ClusterTask`) or in the namespace (`Task`).
+* `runAfter`: Specify the task name (or names) the task must wait to finish before it can start (unless it's the first task in the pipeline).
+* Params: Parameters to pass to the *task* before it runs.  Some tasks may have required params, others may not.
+* Workspaces: Any workspaces that the *task* expects to run.
+
+That's enough explanation for now.  Let's start a pipeline!
 
 [Next: Trigger a Pipeline Run](05-triggering-pipeline.md)

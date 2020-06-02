@@ -14,7 +14,7 @@ spec:
       description: The Maven goals to run
       type: array
       default: ["package"]
-    - name: ENV_VAR
+    - name: ARGS
       description: 
       type: string
       default: "-Dbuild=true"
@@ -27,7 +27,7 @@ spec:
           name: nexus-secret
   steps:
     - name: git-config
-      image: maven:3.6.3-jdk-8
+      image: maven:3.3.9-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       script: |
           #!/usr/bin/env bash
@@ -36,15 +36,16 @@ spec:
           git config --global user.name "Andrew Pitt"
           git config --list
     - name: mvn-build
-      image: maven:3.6.3-jdk-8
+      image: maven:3.3.9-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       command: ["/usr/bin/mvn"]
       args:
-        - "$(params.ENV_VAR)"
+        - "$(params.ARGS)"
         - -s
         - /var/mvn/settings.xml
         - "$(params.GOALS)"
         - -e
+        - -X
       volumeMounts:
         - name: maven-settings
           mountPath: /var/mvn
