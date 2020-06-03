@@ -21,9 +21,9 @@ spec:
         pipelineRef:
           name: maven-build
         params:
-          - name: git-url
+          - name: git-repo-url
             value: $(params.git-repo-url)
-          - name: git-revision
+          - name: git-repo-revision
             value: $(params.git-repo-revision)
         workspaces:
           - name: build-workspace
