@@ -5,9 +5,7 @@ resources:
   - workspaces/workspace-build-pvc.yaml
   - workspaces/workspace-release-pvc.yaml
   - workspaces/workspace-m2-repo.yaml
-  - resources/resource-git-petclinic.yaml
   - resources/github-secret.yaml
-  - tasks/clean.yaml
   - tasks/maven.yaml
   - tasks/oc-start-s2i.yaml
   - tasks/openshift-client.yaml

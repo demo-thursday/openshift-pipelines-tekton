@@ -1,38 +1,34 @@
 kind: Task
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 metadata:
   name: maven
 spec:
   workspaces:
-  - name: local-maven-repo
-    description: Maven local repo dir.
-    mountPath: /data/m2
-  - name: build-workspace
-    description: Build artifacts.
-    mountPath: /workspace/source
-  inputs:
-    params:
+    - name: local-maven-repo
+      description: Maven local repo dir.
+      mountPath: /data/m2
+    - name: build-workspace
+      description: Build artifacts.
+      mountPath: /workspace/source
+  params:
     - name: GOALS
       description: The Maven goals to run
       type: array
       default: ["package"]
-    - name: ENV_VAR
+    - name: ARGS
       description: 
       type: string
       default: "-Dbuild=true"
-    resources:
-    - name: source
-      type: git
   stepTemplate:
     env:
-    - name: "SONAR_USER_HOME"
-      value: "/workspace/source/.sonar"
+      - name: "SONAR_USER_HOME"
+        value: "/workspace/source/sonar"
     envFrom:
-    - secretRef:
-        name: nexus-secret
+      - secretRef:
+          name: nexus-secret
   steps:
     - name: git-config
-      image: maven:3.3.9-jdk-8
+      image: maven:3.6.3-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       script: |
           #!/usr/bin/env bash
@@ -41,15 +37,16 @@ spec:
           git config --global user.name "Andrew Pitt"
           git config --list
     - name: mvn-build
-      image: maven:3.3.9-jdk-8
+      image: maven:3.6.3-jdk-8
       workingDir: $(workspaces.build-workspace.path)
       command: ["/usr/bin/mvn"]
       args:
-        - "$(inputs.params.ENV_VAR)"
+        - "$(params.ARGS)"
         - -s
         - /var/mvn/settings.xml
-        - "$(inputs.params.GOALS)"
+        - "$(params.GOALS)"
         - -e
+        - -X
       volumeMounts:
         - name: maven-settings
           mountPath: /var/mvn

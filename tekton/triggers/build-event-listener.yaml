@@ -5,7 +5,7 @@ metadata:
 spec:
   serviceAccountName: pipeline
   triggers:
-  - bindings:
-    - name: petclinic-binding
-    template:
-      name: petclinic-template
+    - bindings:
+      - name: petclinic-binding
+      template:
+        name: petclinic-template

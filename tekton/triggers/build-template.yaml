@@ -4,43 +4,31 @@ metadata:
   name: petclinic-template
 spec:
   params:
-  - name: git-repo-url
-    description: The git repository url
-  - name: git-revision
-    description: The git revision
-    default: master
-  - name: git-repo-name
-    description: The name of the deployment to be created / patched
-
+    - name: git-repo-url
+      description: The git repository url
+    - name: git-repo-revision
+      description: The git revision
+      default: master
+    - name: git-repo-name
+      description: The name of the deployment to be created / patched
   resourcetemplates:
-  - apiVersion: tekton.dev/v1alpha1
-    kind: PipelineResource
-    metadata:
-      name: $(params.git-repo-name)-git-repo-$(uid)
-    spec:
-      type: git
-      params:
-      - name: revision
-        value: $(params.git-revision)
-      - name: url
-        value: $(params.git-repo-url)
-
-  - apiVersion: tekton.dev/v1beta1
-    kind: PipelineRun
-    metadata:
-      name: build-deploy-$(params.git-repo-name)-$(uid)
-    spec:
-      serviceAccountName: pipeline
-      pipelineRef:
-        name: maven-build
-      resources:
-      - name: app-repo
-        resourceRef:
-          name: $(params.git-repo-name)-git-repo-$(uid)
-      workspaces:
-      - name: build-workspace
-        persistentVolumeClaim:
-          claimName: build-workspace-pvc
-      - name: local-maven-repo
-        persistentVolumeClaim:
-          claimName: maven-m2-repo-pvc
+    - kind: PipelineRun
+      apiVersion: tekton.dev/v1beta1
+      metadata:
+        name: build-$(params.git-repo-name)-$(uid)
+      spec:
+        serviceAccountName: pipeline
+        pipelineRef:
+          name: maven-build
+        params:
+          - name: git-repo-url
+            value: $(params.git-repo-url)
+          - name: git-repo-revision
+            value: $(params.git-repo-revision)
+        workspaces:
+          - name: build-workspace
+            persistentVolumeClaim:
+              claimName: build-workspace-pvc
+          - name: local-maven-repo
+            persistentVolumeClaim:
+              claimName: maven-m2-repo-pvc
