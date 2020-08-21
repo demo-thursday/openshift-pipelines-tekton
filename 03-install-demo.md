@@ -12,11 +12,11 @@ $ oc apply -k infra
 
 This will setup and configure Nexus and SonarQube.  It will also create a `ConfigMap` containing a `settings.xml` file that will be mounted into the *Maven* task container, and a `Secret` with the Nexus credentials.
 
-Depending on how much horsepower your cluster has, it may take 2-3 minutes for Nexus and SonarQube to start and configure.  You can should be able to see them spinning up in the `cicd` project.
+Depending on how much horsepower your cluster has, it may take 2-3 minutes for Nexus and SonarQube to start and configure.  You should be able to see them spinning up in the `cicd` project.
 
 ## Install the Demo App
 
-We also need an application to deploy!  Let's create two environemnts (DEV and UAT) for the trusy Petclinic application.
+We also need an application to deploy!  Let's create two environemnts (DEV and UAT) for the trusty Petclinic application.
 
 ```
 $ oc apply -k app/overlays/all
