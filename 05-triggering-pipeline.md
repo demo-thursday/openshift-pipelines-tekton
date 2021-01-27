@@ -16,10 +16,6 @@ metadata:
 spec:
   pipelineRef:
     name: maven-build
-  resources:
-  - name: app-repo
-    resourceRef:
-      name: app-repo
   workspaces:
   - name: build-workspace
     persistentVolumeClaim:
@@ -33,7 +29,6 @@ This resource is actually quite self explanatory, the different components are:
 
 * **generateName:** Instead of having a static name, the name of this `PipelineRun` will be generated to make sure there are no duplicates.
 * **pipelineRef:** The name of the `Pipieline` to run.
-* **resources:** The list of `PipelineResource`s the `Pipeline` will use.  This is now deprecated.
 * **workspaces:** The list of `Workspace`s and their reference.  In this case, both `Workspace` is backed by it's own `PersistentVolumeClaim`.
 
 That's it!  With this we can run our pipeline.
